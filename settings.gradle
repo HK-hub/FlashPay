@@ -1,0 +1,3 @@
+rootProject.name = 'FlashPay'
+include 'pay-common'
+

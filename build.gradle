@@ -1,0 +1,97 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.2.RELEASE'
+    }
+    repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+
+// 全项目配置
+allprojects {
+
+    // 元信息
+    group 'com.hk.pay'
+    version 'M1 Snapshot'
+    apply plugin: 'idea'
+
+    // 依赖仓库设置
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    // 指定项目编码
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+}
+
+
+// 子项目模块统一配置
+subprojects {
+
+    apply plugin: 'java'
+
+    // 指定JDK版本
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    // 指定编码格式
+    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+    repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    }
+
+
+    //依赖版本
+    ext {
+        springBootVersion = "2.3.12.RELEASE"
+        springCloudAlibabaVersion = "2.2.7.RELEASE"
+        springCloudVersion=" Hoxton.SR12"
+        mysqlConnectorVersion = "8.0.25"
+        fastjsonVersion = "1.2.76"
+    }
+
+    // 子模块依赖导入
+    dependencies {
+
+        // Spring Cloud alibaba
+        implementation "com.alibaba.cloud:spring-cloud-alibaba-dependencies:$springCloudAlibabaVersion"
+        // spring cloud
+        implementation "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        // JDBC Driver
+        implementation "mysql:mysql-connector-java:$mysqlConnectorVersion"
+        // druid
+        implementation 'com.alibaba:druid-spring-boot-starter:1.2.6'
+        // mybatis plus
+        implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.0'
+        // fast json
+        implementation "com.alibaba:fastjson:$fastjsonVersion"
+        // gson
+        implementation 'com.google.code.gson:gson:2.8.7'
+        // map struct
+        implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+        // guava
+        implementation 'com.google.guava:guava:30.1.1-jre'
+
+
+        // 单元测试
+        testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    }
+
+
+    configurations {
+        //移除spring boot 默认logger依赖
+        all*.exclude module: 'spring-boot-starter-logging'
+    }
+
+}
+
